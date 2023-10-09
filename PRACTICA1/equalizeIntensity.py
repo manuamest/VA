@@ -2,16 +2,17 @@ import cv2
 import numpy as np
 
 def equalizeIntensity(inImage, nBins=256):
+
     # Asegurarse de que la imagen está en el rango [0, 1]
     inImage = np.clip(inImage, 0, 1)
 
     # Crear un histograma acumulativo
-    hist, _ = np.histogram(inImage * (nBins - 1), bins=nBins, range=(0, nBins - 1))
-    cdf = hist.cumsum()
-    cdf = cdf / cdf[-1]
+    hist, _ = np.histogram(inImage * (nBins - 1), bins=nBins, range=(0, nBins - 1)) # Calculo del histograma
+    histacum = hist.cumsum()                                                        # Histograma acumulativo
+    histacum = histacum / histacum[-1]                                              # Normaliza entre 0 1
 
     # Ecualizar la imagen usando el histograma acumulativo
-    outImage = cdf[np.round(inImage * (nBins - 1)).astype(int)]
+    outImage = histacum[np.round(inImage * (nBins - 1)).astype(int)]
     
     # Asegurarse de que la imagen de salida está en el rango [0, 1]
     outImage = np.clip(outImage, 0, 1)

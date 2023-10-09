@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 
 def adjustIntensity(inImage, inRange=[], outRange=[0, 1]):
-    # Verificar si el rango de entrada está vacío y calcularlo si es necesario
+
+    # Verificar si el rango de entrada está vacío, en ese caso calcularlo
     if not inRange:
         inRange = [np.min(inImage), np.max(inImage)]
     
     # Aplicar la compresión o estiramiento lineal del histograma
-    outImage = (inImage - inRange[0]) / (inRange[1] - inRange[0])  # Normalización al rango [0, 1]
-    outImage = outImage * (outRange[1] - outRange[0]) + outRange[0]  # Escalamiento al nuevo rango
+    outImage = outRange[0] + (outRange[1] - outRange[0]) * (inImage - inRange[0]) / (inRange[1] - inRange[0])
     
     # Asegurarse de que los valores estén en el rango [0, 1]
     outImage = np.clip(outImage, 0, 1)

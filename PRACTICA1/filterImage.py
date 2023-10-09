@@ -13,7 +13,7 @@ def filterImage(inImage, kernel):
     # Crear una imagen de salida inicializada a ceros
     outImage = np.zeros_like(inImage, dtype=np.float32)
 
-    # Realizar la convolución
+    # Convolución
     for i in range(dRow, rows - dRow):
         for j in range(dCol, cols - dCol):
             # Extraer la región de interés de la imagen de entrada
@@ -29,7 +29,7 @@ def filterImage(inImage, kernel):
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    # Cargar una imagen en escala de grises (asegúrate de que está en [0, 1])
+    # Cargar una imagen
     image = cv2.imread("imgp1/imagen_normalizada.png", cv2.IMREAD_GRAYSCALE) / 255.0
 
     # Definir un kernel de ejemplo (por ejemplo, un filtro de promedio)
