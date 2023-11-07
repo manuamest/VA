@@ -6,7 +6,7 @@ def medianFilter(inImage, filterSize):
     rows, cols = inImage.shape
 
     # Mitad del tamaño del filtro (radio)
-    radius = filterSize // 2
+    radius = filterSize // 2 + 1
 
     # Crear una imagen de salida inicializada a ceros
     outImage = np.zeros_like(inImage)

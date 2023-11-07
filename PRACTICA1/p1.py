@@ -79,3 +79,89 @@ def gaussKernel1D(sigma):
 
     return kernel
 
+def gaussianFilter(inImage, sigma):
+    # Calcular los kernels unidimensionales
+    kernel1D = gaussKernel1D(sigma)
+
+    # Aplicar la convolución horizontal (1D)
+    filtered_horizontal = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=1, arr=inImage)
+
+    # Aplicar la convolución vertical (1D) al resultado de la convolución horizontal
+    filtered_image = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=0, arr=filtered_horizontal)
+
+    return filtered_image
+
+def medianFilter(inImage, filterSize):
+    # Obtener las dimensiones de la imagen de entrada
+    rows, cols = inImage.shape
+
+    # Mitad del tamaño del filtro (radio)
+    radius = filterSize // 2 + 1
+
+    # Crear una imagen de salida inicializada a ceros
+    outImage = np.zeros_like(inImage)
+
+    # Iterar sobre la imagen
+    for i in range(rows):
+        for j in range(cols):
+            # Definir los límites de la ventana
+            row_min = max(0, i - radius)
+            row_max = min(rows, i + radius + 1)
+            col_min = max(0, j - radius)
+            col_max = min(cols, j + radius + 1)
+
+            # Extraer la región de interés (ventana)
+            window = inImage[row_min:row_max, col_min:col_max]
+
+            # Calcular la mediana de la ventana y asignarla al píxel de salida
+            outImage[i, j] = np.median(window)
+
+    return outImage
+
+# TENER EN CUENTA QUE LAS IMAGENES TIENEN QUE ESTAR EN BINARIO _, binary_image = cv2.threshold(image, 0.5, 1, cv2.THRESH_BINARY)
+
+
+def erode(inImage, SE, center=None):
+    # Si el centro no se proporciona, se calcula
+    if center is None:
+        center = [SE.shape[0]//2, SE.shape[1]//2]
+
+    # Crear una imagen de salida del mismo tamaño que la imagen de entrada
+    outImage = np.zeros_like(inImage)
+
+    # Recorrer cada píxel de la imagen
+    for i in range(center[0], inImage.shape[0]-center[0]):
+        for j in range(center[1], inImage.shape[1]-center[1]):
+            # Aplicar el elemento estructurante al píxel y su vecindario
+            neighborhood = inImage[i-center[0]:i+(SE.shape[0]-center[0]), j-center[1]:j+(SE.shape[1]-center[1])]
+            # Si todos los píxeles bajo el elemento estructurante son 1, el píxel se mantiene
+            if (neighborhood[SE==1] == 1).all():
+                outImage[i, j] = 1
+
+    return outImage
+
+def dilate(inImage, SE, center=None):
+    # Si el centro no se proporciona, se calcula
+    if center is None:
+        center = [SE.shape[0]//2, SE.shape[1]//2]
+
+    # Crear una imagen de salida del mismo tamaño que la imagen de entrada
+    outImage = np.zeros_like(inImage)
+
+    # Recorrer cada píxel de la imagen
+    for i in range(center[0], inImage.shape[0]-center[0]):
+        for j in range(center[1], inImage.shape[1]-center[1]):
+            # Aplicar el elemento estructurante al píxel y su vecindario
+            neighborhood = inImage[i-center[0]:i+(SE.shape[0]-center[0]), j-center[1]:j+(SE.shape[1]-center[1])]
+            # Si cualquier píxel bajo el elemento estructurante es 1, el píxel se mantiene
+            if (neighborhood[SE==1] == 1).any():
+                outImage[i, j] = 1
+
+    return outImage
+
+def opening(inImage, SE, center=None):
+    return dilate(erode(inImage, SE, center), SE, center)
+
+def closing(inImage, SE, center=None):
+    return erode(dilate(inImage, SE, center), SE, center)
+
