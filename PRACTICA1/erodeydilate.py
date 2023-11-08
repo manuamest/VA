@@ -23,7 +23,7 @@ def erode(inImage, SE, center=None):
 def dilate(inImage, SE, center=None):
     # Si el centro no se proporciona, se calcula
     if center is None:
-        center = [SE.shape[0]//2, SE.shape[1]//2]
+        center = [SE.shape[0]//2 + 1, SE.shape[1]//2 + 1]
 
     # Crear una imagen de salida del mismo tamaño que la imagen de entrada
     outImage = np.zeros_like(inImage)
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     SE = np.ones((13, 13), dtype=np.uint8)
 
     # Aplicar el filtro de medianas
-    output_image = closing(binary_image, SE)
+    output_image = dilate(binary_image, SE)
 
     cv2.imwrite('imgp1/erode.jpg', (output_image * 255).astype(np.uint8))
 

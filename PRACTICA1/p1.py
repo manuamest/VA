@@ -165,3 +165,5 @@ def opening(inImage, SE, center=None):
 def closing(inImage, SE, center=None):
     return erode(dilate(inImage, SE, center), SE, center)
 
+#           HIT OR MISS PENDIENTE
+
