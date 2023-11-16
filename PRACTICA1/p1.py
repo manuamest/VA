@@ -165,5 +165,67 @@ def opening(inImage, SE, center=None):
 def closing(inImage, SE, center=None):
     return erode(dilate(inImage, SE, center), SE, center)
 
-#           HIT OR MISS PENDIENTE
+def hit_or_miss(inImage, objSE, bgSE, center=None):
+    # Comprobamos si los elementos estructurantes son incoherentes
+    if np.any(np.logical_and(objSE, bgSE)):
+        return "Error: elementos estructurantes incoherentes"
+
+    # Si no se proporciona un centro, lo calculamos
+    if center is None:
+        center = (objSE.shape[0] // 2 + 1, objSE.shape[1] // 2 + 1)
+
+    # Aplicamos la erosión a la imagen de entrada con el elemento estructurante del objeto
+    erosionObj = erode(inImage, objSE, center)
+
+    # Aplicamos la erosión al complemento de la imagen de entrada con el elemento estructurante del fondo
+    erosionBg = erode(1 - inImage, bgSE, center)
+
+    # La operación hit-or-miss es la intersección de las dos erosiones
+    outImage = cv.bitwise_and(erosionObj, erosionBg)
+
+    return outImage
+
+bgSE =  np.array([[0, 0, 0], 
+                  [1, 1, 0],
+                  [0, 1, 0]], dtype=np.uint8)
+
+objSE = np.array([[0, 1, 1],
+                  [0, 0, 1],
+                  [0, 0, 0]], dtype=np.uint8)
+
+def gradientImage(inImage, operator):
+
+    # Seleccion de operador
+    if operator == 'Roberts':
+        kernel_x = np.array([[-1, 0], [0, 1]], dtype=np.float32)
+        kernel_y = np.array([[0, -1], [1, 0]], dtype=np.float32)
+    elif operator == 'CentralDiff':
+        kernel_x = np.array([[-1, 0, 1]], dtype=np.float32)
+        kernel_y = np.array([[-1], [0], [1]], dtype=np.float32)
+    elif operator == 'Prewitt':
+        kernel_x = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]], dtype=np.float32)
+        kernel_y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]], dtype=np.float32)
+    elif operator == 'Sobel':
+        kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], dtype=np.float32)
+        kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], dtype=np.float32)
+    else:
+        return "Error: operador no reconocido"
+    
+    # Calculo gx y gy
+    gx = filterImage(inImage, -1, kernel_x)
+    gy = filterImage(inImage, -1, kernel_y)
+
+    return gx, gy
+
+def LoG(inImage, sigma):
+
+    laplace = np.array([[0, -1, 1],
+                        [-1, 4, -1],
+                        [0, -1, 0]], dtype=np.uint8)
+    
+    gaussianImage = gaussianFilter(inImage, sigma)
+
+    outImage = filterImage(gaussianImage, laplace)
+
+    return outImage
 

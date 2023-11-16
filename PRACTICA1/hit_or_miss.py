@@ -38,6 +38,8 @@ def hit_or_miss(inImage, objSE, bgSE, center=None):
     # La operación hit-or-miss es la intersección de las dos erosiones
     outImage = cv2.bitwise_and(erosionObj, erosionBg)
 
+    # erosionObj && erosionBg
+
     return outImage
 
 # Cargamos la imagen de entrada
@@ -86,12 +88,12 @@ bgSE =  np.array([[1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1]], dtype=np.uint8)
 
 bgSE =  np.array([[0, 0, 0], 
-                   [1, 1, 0],
-                   [0, 1, 0]], dtype=np.uint8)
+                  [1, 1, 0],
+                  [0, 1, 0]], dtype=np.uint8)
 
 objSE = np.array([[0, 1, 1],
-                 [0, 0, 1],
-                 [0, 0, 0]], dtype=np.uint8)
+                  [0, 0, 1],
+                  [0, 0, 0]], dtype=np.uint8)
 
 
 # Llamamos a la función hit_or_miss
