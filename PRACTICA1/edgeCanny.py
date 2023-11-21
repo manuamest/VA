@@ -86,7 +86,7 @@ def gradientImage(inImage, operator):
 def edgeCanny(inImage, sigma, tlow, thigh):
     # Paso 1: Aplicar filtro Gaussiano para suavizar la imagen
     smoothed_image = gaussianFilter(inImage, sigma)
-    cv2.imshow('Smoothed Image', smoothed_image)
+    #cv2.imshow('Smoothed Image', smoothed_image)
 
 
     # Paso 2: Calcular gradientes en las direcciones x e y con el operador Sobel
@@ -94,23 +94,29 @@ def edgeCanny(inImage, sigma, tlow, thigh):
 
     # Paso 3: Calcular la magnitud del gradiente y la dirección
     magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
-    gradient_direction = np.arctan2(gradient_y, gradient_x) * (180 / np.pi)
+    gradient_direction = (np.arctan2(gradient_y, gradient_x) * (180 / np.pi)) 
 
     # Paso 4: Aplicar la supresión no máxima (non-maximum suppression)
-    gradient_direction = np.round(gradient_direction / 45) * 45
+    #gradient_direction = np.round(gradient_direction / 45) * 45
     gradient_direction[gradient_direction < 0] += 180
 
     suppressed_image = np.zeros_like(magnitude)
     for i in range(1, magnitude.shape[0] - 1):
         for j in range(1, magnitude.shape[1] - 1):
+
             direction = gradient_direction[i, j]
-            if direction == 0 and (magnitude[i, j] >= magnitude[i, j - 1]) and (magnitude[i, j] >= magnitude[i, j + 1]):
-                suppressed_image[i, j] = magnitude[i, j]
-            elif direction == 45 and (magnitude[i, j] >= magnitude[i - 1, j + 1]) and (magnitude[i, j] >= magnitude[i + 1, j - 1]):
-                suppressed_image[i, j] = magnitude[i, j]
-            elif direction == 90 and (magnitude[i, j] >= magnitude[i - 1, j]) and (magnitude[i, j] >= magnitude[i + 1, j]):
-                suppressed_image[i, j] = magnitude[i, j]
-            elif direction == 135 and (magnitude[i, j] >= magnitude[i - 1, j - 1]) and (magnitude[i, j] >= magnitude[i + 1, j + 1]):
+            
+            if (0 <= direction < 22.5) or (157.5 <= direction <= 180) or (337.5 <= direction <= 360):
+                neighbors = [magnitude[i, j - 1], magnitude[i, j + 1]]
+            elif (22.5 <= direction < 67.5) or (202.5 <= direction < 247.5):
+                neighbors = [magnitude[i - 1, j - 1], magnitude[i + 1, j + 1]]
+            elif (67.5 <= direction < 112.5) or (247.5 <= direction < 292.5):
+                neighbors = [magnitude[i - 1, j], magnitude[i + 1, j]]
+            elif (112.5 <= direction < 157.5) or (292.5 <= direction < 337.5):
+                neighbors = [magnitude[i - 1, j + 1], magnitude[i + 1, j - 1]]
+
+            # Comparar magnitud actual con vecinos en la dirección del gradiente
+            if magnitude[i, j] >= max(neighbors):
                 suppressed_image[i, j] = magnitude[i, j]
 
     cv2.imshow('Suppressed Image', suppressed_image)
@@ -137,18 +143,19 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     return edges.astype(np.float32)
 
 # Cargar una imagen de ejemplo
-original_image = cv2.imread("imgp1/chica4k.png", cv2.IMREAD_GRAYSCALE) / 255.0
+original_image = cv2.imread("imgp1/circles.png", cv2.IMREAD_GRAYSCALE) / 255.0
 
 # Parámetros de Canny
-sigma = 1.4
-tlow = 30/255
-thigh = 100/255
+sigma = 0.17
+tlow = 0.1
+thigh = 0.8
 
 # Aplicar el detector de bordes de Canny
 result_image = edgeCanny(original_image, sigma, tlow, thigh)
 
 # Mostrar la imagen original y el resultado
-cv2.imshow('Original Image', original_image)
+#cv2.imshow('Original Image', original_image)
+
 cv2.imshow('Canny Edge Detection', result_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
