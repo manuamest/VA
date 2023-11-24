@@ -149,12 +149,12 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     return edges
 
 # Cargar una imagen de ejemplo
-original_image = cv2.imread("imgp1/circles.png", cv2.IMREAD_GRAYSCALE) / 255.0
+original_image = cv2.imread("imgp1/circles1.png", cv2.IMREAD_GRAYSCALE) / 255.0
 
 # Parámetros de Canny
 sigma = 0.2
-tlow = 0.2
-thigh = 0.3
+tlow = 0.05
+thigh = 0.2
 
 # Aplicar el detector de bordes de Canny
 result_image = edgeCanny(original_image, sigma, tlow, thigh)
