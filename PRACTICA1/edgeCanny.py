@@ -86,8 +86,6 @@ def gradientImage(inImage, operator):
 def edgeCanny(inImage, sigma, tlow, thigh):
     # Paso 1: Aplicar filtro Gaussiano para suavizar la imagen
     smoothed_image = gaussianFilter(inImage, sigma)
-    #cv2.imshow('Smoothed Image', smoothed_image)
-
 
     # Paso 2: Calcular gradientes en las direcciones x e y con el operador Sobel
     [gradient_x, gradient_y] = gradientImage(smoothed_image, 'Sobel')
@@ -97,29 +95,26 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     gradient_direction = (np.arctan2(gradient_y, gradient_x) * (180 / np.pi)) 
 
     # Paso 4: Aplicar la supresión no máxima (non-maximum suppression)
-    #gradient_direction = np.round(gradient_direction / 45) * 45
-    gradient_direction[gradient_direction < 0] += 180
 
     suppressed_image = np.zeros_like(magnitude)
     for i in range(1, magnitude.shape[0] - 1):
         for j in range(1, magnitude.shape[1] - 1):
+            gradient_direction[gradient_direction < 0] += 180
 
             direction = gradient_direction[i, j]
             
-            if (0 <= direction < 22.5) or (157.5 <= direction <= 180) or (337.5 <= direction <= 360):
+            if (0 <= direction < 22.5) or (157.5 <= direction <= 180):
                 neighbors = [magnitude[i, j - 1], magnitude[i, j + 1]]
-            elif (22.5 <= direction < 67.5) or (202.5 <= direction < 247.5):
+            elif (22.5 <= direction < 67.5):
                 neighbors = [magnitude[i - 1, j - 1], magnitude[i + 1, j + 1]]
-            elif (67.5 <= direction < 112.5) or (247.5 <= direction < 292.5):
+            elif (67.5 <= direction < 112.5):
                 neighbors = [magnitude[i - 1, j], magnitude[i + 1, j]]
-            elif (112.5 <= direction < 157.5) or (292.5 <= direction < 337.5):
+            elif (112.5 <= direction < 157.5):
                 neighbors = [magnitude[i - 1, j + 1], magnitude[i + 1, j - 1]]
 
             # Comparar magnitud actual con vecinos en la dirección del gradiente
             if magnitude[i, j] >= max(neighbors):
                 suppressed_image[i, j] = magnitude[i, j]
-
-    cv2.imshow('Suppressed Image', suppressed_image)
 
     # Paso 5: Aplicar el umbral de histéresis
     edges = np.zeros_like(suppressed_image)
@@ -127,34 +122,45 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     strong_edges = (suppressed_image >= thigh)
     weak_edges = (suppressed_image >= tlow) & (suppressed_image <= thigh)
 
-    # Etapa de seguimiento de bordes débiles conectados a bordes fuertes
-    for i in range(1, suppressed_image.shape[0] - 1):
-        for j in range(1, suppressed_image.shape[1] - 1):
-            if weak_edges[i, j]:
-                # Verificar vecinos para conexión a bordes fuertes
-                if np.all(strong_edges[i - 1:i + 2, j - 1:j + 2]):
-                    edges[i, j] = 1
-
-    #cv2.imshow('Edges Image', edges)
-
     # Mantener bordes fuertes
     edges[strong_edges] = 1
+
+    # Etapa de seguimiento de bordes débiles conectados a bordes fuertes
+
+    for i in range(1, suppressed_image.shape[0] - 1):
+        for j in range(1, suppressed_image.shape[1] - 1):
+            gradient_direction[gradient_direction < 0] += 180
+            if weak_edges[i, j]:
+                # Obtener vecinos en la dirección del gradiente
+                direction = gradient_direction[i, j]
+                if (0 <= direction < 22.5) or (157.5 <= direction <= 180):
+                    neighbors = [(i, j - 1), (i, j + 1)]
+                elif (22.5 <= direction < 67.5):
+                    neighbors = [(i - 1, j - 1), (i + 1, j + 1)]
+                elif (67.5 <= direction < 112.5):
+                    neighbors = [(i - 1, j), (i + 1, j)]
+                elif (112.5 <= direction < 157.5):
+                    neighbors = [(i - 1, j + 1), (i + 1, j - 1)]
+
+    # Verificar vecinos para conexión a bordes fuertes
+    if np.any(strong_edges[x, y] for x, y in neighbors):
+        edges[i, j] = 1
     
-    return edges.astype(np.float32)
+    return edges
 
 # Cargar una imagen de ejemplo
-original_image = cv2.imread("imgp1/CUADRADO2.jpg", cv2.IMREAD_GRAYSCALE) / 255.0
+original_image = cv2.imread("imgp1/circles.png", cv2.IMREAD_GRAYSCALE) / 255.0
 
 # Parámetros de Canny
-sigma = 0.17
-tlow = 0.01
-thigh = 0.9
+sigma = 0.2
+tlow = 0.2
+thigh = 0.3
 
 # Aplicar el detector de bordes de Canny
 result_image = edgeCanny(original_image, sigma, tlow, thigh)
 
 # Mostrar la imagen original y el resultado
-#cv2.imshow('Original Image', original_image)
+cv2.imshow('Original Image', original_image)
 
 cv2.imshow('Canny Edge Detection', result_image)
 cv2.waitKey(0)

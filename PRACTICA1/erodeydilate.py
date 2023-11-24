@@ -23,7 +23,7 @@ def erode(inImage, SE, center=None):
 def dilate(inImage, SE, center=None):
     # Si el centro no se proporciona, se calcula
     if center is None:
-        center = [SE.shape[0]//2 + 1, SE.shape[1]//2 + 1]
+        center = [SE.shape[0]//2, SE.shape[1]//2]
 
     # Crear una imagen de salida del mismo tamaño que la imagen de entrada
     outImage = np.zeros_like(inImage)
@@ -36,6 +36,7 @@ def dilate(inImage, SE, center=None):
             # Si cualquier píxel bajo el elemento estructurante es 1, el píxel se mantiene
             if (neighborhood[SE==1] == 1).any():
                 outImage[i, j] = 1
+
 
     return outImage
 

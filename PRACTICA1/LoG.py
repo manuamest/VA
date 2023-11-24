@@ -1,5 +1,32 @@
 import cv2
 import numpy as np
+from normalizacionminmax import normalizar_imagen
+
+def filterImage(inImage, kernel):
+    # Obtener las dimensiones de la imagen de entrada y el kernel
+    rows, cols = inImage.shape
+    kRows, kCols = kernel.shape
+
+    # Calcular el desplazamiento necesario para centrar el kernel
+    dRow = kRows // 2
+    dCol = kCols // 2
+
+    # Crear una imagen de salida inicializada a ceros
+    outImage = np.zeros_like(inImage, dtype=np.float32)
+
+    # Convolución
+    for i in range(dRow, rows - dRow):
+        for j in range(dCol, cols - dCol):
+            # Extraer la región de interés de la imagen de entrada
+            roi = inImage[i - dRow:i + dRow + 1, j - dCol:j + dCol + 1]
+
+            # Aplicar la convolución entre el kernel y la región de interés
+            conv_result = np.sum(roi * kernel)
+
+            # Asignar el resultado a la posición correspondiente en la imagen de salida
+            outImage[i, j] = conv_result
+
+    return outImage
 
 def gaussKernel1D(sigma):
     # Calcular N a partir de σ
@@ -27,9 +54,11 @@ def gaussianFilter(inImage, sigma):
 
     # Aplicar la convolución horizontal (1D)
     filtered_horizontal = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=1, arr=inImage)
+    #filtered_horizontal = filterImage(inImage, kernel1D)
 
     # Aplicar la convolución vertical (1D) al resultado de la convolución horizontal
     filtered_image = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=0, arr=filtered_horizontal)
+    #filtered_image = filterImage(filtered_horizontal, np.transpose(kernel1D))
 
     return filtered_image
 
@@ -74,17 +103,21 @@ def LoG(inImage, sigma):
 # Ejemplo de uso
 if __name__ == "__main__":
     # Cargar una imagen
-    image = cv2.imread("imgp1/CUADRADO.jpg", cv2.IMREAD_GRAYSCALE) / 255.0
+    imageOriginal = cv2.imread("imgp1/chica4k.png")
+
+    image = normalizar_imagen(imageOriginal) /255.0
 
     sigma = 1.5
 
     # Aplicar el filtro a la imagen
     output_image = LoG(image, sigma)
-    _, binary_image = cv2.threshold(output_image, 0.1, 1, cv2.THRESH_BINARY)
-
+    #_, binary_image = cv2.threshold(output_image, 0.1, 1, cv2.THRESH_BINARY)
+    #lognormalizado = normalizar_imagen(output_image)
 
     # Mostrar la imagen original y la filtrada
     cv2.imshow("Original Image", image)
-    cv2.imshow("LoG Image", binary_image)
+    cv2.imshow("LoG Image", output_image)
+  #  cv2.imshow("LoGNormalizado Image", lognormalizado)
+    
     cv2.waitKey(0)
     cv2.destroyAllWindows()
