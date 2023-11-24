@@ -47,7 +47,21 @@ def gradientImage(inImage, operator):
         return "Error: operador no reconocido"
     
     # Calculo gx y gy
-    gx = filterImage(inImage, -1, kernel_x)
-    gy = filterImage(inImage, -1, kernel_y)
+    gx = filterImage(inImage, kernel_x)
+    gy = filterImage(inImage, kernel_y)
 
     return gx, gy
+
+if __name__ == "__main__":
+    # Cargar una imagen en escala de grises (asegúrate de que está en [0, 255])
+    image = cv2.imread("imgp1/CIRCULO.jpg", cv2.IMREAD_GRAYSCALE) / 255.0
+
+    # Aplicar el operador 'Sobel' como ejemplo
+    gx, gy = gradientImage(image, 'CentralDiff')
+
+    # Mostrar las imágenes resultantes
+    cv2.imshow("Original Image", image)
+    cv2.imshow("Gradient X", gx)
+    cv2.imshow("Gradient Y", gy)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

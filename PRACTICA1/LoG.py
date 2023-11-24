@@ -61,9 +61,9 @@ def filterImage(inImage, kernel):
 
 def LoG(inImage, sigma):
 
-    laplace = np.array([[0, -1, 0],
-                        [-1, 4, -1],
-                        [0, -1, 0]], dtype=np.float32)
+    laplace = np.array([[-1, -1, -1],
+                        [-1, 8, -1],
+                        [-1, -1, -1]], dtype=np.float32)
     
     gaussianImage = gaussianFilter(inImage, sigma)
 
@@ -74,18 +74,17 @@ def LoG(inImage, sigma):
 # Ejemplo de uso
 if __name__ == "__main__":
     # Cargar una imagen
-    image = cv2.imread("imgp1/chica4k.png", cv2.IMREAD_GRAYSCALE) / 255
-    #_, binary_image = cv2.threshold(image, 0.5, 1, cv2.THRESH_BINARY)
+    image = cv2.imread("imgp1/CUADRADO.jpg", cv2.IMREAD_GRAYSCALE) / 255.0
 
     sigma = 1.5
 
     # Aplicar el filtro a la imagen
     output_image = LoG(image, sigma)
+    _, binary_image = cv2.threshold(output_image, 0.1, 1, cv2.THRESH_BINARY)
 
-    cv2.imwrite('imgp1/LoGImage.jpg', (output_image * 255).astype(np.float32))
 
     # Mostrar la imagen original y la filtrada
     cv2.imshow("Original Image", image)
-    cv2.imshow("LoG Image", output_image)
+    cv2.imshow("LoG Image", binary_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

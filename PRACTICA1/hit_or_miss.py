@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import matplotlib
 
 def erode(inImage, SE, center=None):
     # Si el centro no se proporciona, se calcula
@@ -27,7 +28,7 @@ def hit_or_miss(inImage, objSE, bgSE, center=None):
 
     # Si no se proporciona un centro, lo calculamos
     if center is None:
-        center = (objSE.shape[0] // 2 + 1, objSE.shape[1] // 2 + 1)
+        center = (objSE.shape[0] // 2, objSE.shape[1] // 2)
 
     # Aplicamos la erosión a la imagen de entrada con el elemento estructurante del objeto
     erosionObj = erode(inImage, objSE, center)
@@ -87,28 +88,36 @@ bgSE =  np.array([[1,1,1,1,1,1,1],
                  [1,1,1,0,1,1,1],
                  [1,1,1,1,1,1,1]], dtype=np.uint8)
 
-bgSE =  np.array([[0, 0, 0], 
+objSE =  np.array([[0, 0, 0], 
                   [1, 1, 0],
                   [0, 1, 0]], dtype=np.uint8)
 
-objSE = np.array([[0, 1, 1],
+bgSE = np.array([[0, 1, 1],
                   [0, 0, 1],
                   [0, 0, 0]], dtype=np.uint8)
 
+inImageDiaposHoM = np.array([[0, 0, 0, 0, 0, 0, 0],
+                             [0, 0, 0, 1, 1, 0, 0],
+                             [0, 0, 1, 1, 1, 1, 0],
+                             [0, 0, 1, 1, 1, 1, 0],
+                             [0, 0, 0, 1, 1, 0, 0],
+                             [0, 0, 0, 1, 0, 0, 0],
+                             [0, 0, 0, 0, 0, 0, 0]])
 
 # Llamamos a la función hit_or_miss
-output_image = hit_or_miss(binary_image, objSE, bgSE)
+output_image = hit_or_miss(inImageDiaposHoM, objSE, bgSE)
 
 SE = np.ones((13, 13), dtype=np.uint8)
 
-
+print(inImageDiaposHoM)
+print(output_image)
 #output_image = erode(binary_image, bgSE)
 
 # Guardamos la imagen de salida
-cv2.imwrite('imgp1/hitormiss.png', output_image)
+#cv2.imwrite('imgp1/hitormiss.png', output_image)
 
 # Mostrar la imagen original y la filtrada
-cv2.imshow("Original Image", image)
-cv2.imshow("HitOrMiss Image", output_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#cv2.imshow("Original Image", image)
+#cv2.imshow("HitOrMiss Image", output_image)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()

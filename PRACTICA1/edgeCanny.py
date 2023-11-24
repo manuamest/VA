@@ -132,10 +132,10 @@ def edgeCanny(inImage, sigma, tlow, thigh):
         for j in range(1, suppressed_image.shape[1] - 1):
             if weak_edges[i, j]:
                 # Verificar vecinos para conexión a bordes fuertes
-                if np.any(strong_edges[i - 1:i + 2, j - 1:j + 2]):
+                if np.all(strong_edges[i - 1:i + 2, j - 1:j + 2]):
                     edges[i, j] = 1
 
-    cv2.imshow('Edges Image', edges)
+    #cv2.imshow('Edges Image', edges)
 
     # Mantener bordes fuertes
     edges[strong_edges] = 1
@@ -143,12 +143,12 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     return edges.astype(np.float32)
 
 # Cargar una imagen de ejemplo
-original_image = cv2.imread("imgp1/circles.png", cv2.IMREAD_GRAYSCALE) / 255.0
+original_image = cv2.imread("imgp1/CUADRADO2.jpg", cv2.IMREAD_GRAYSCALE) / 255.0
 
 # Parámetros de Canny
 sigma = 0.17
-tlow = 0.1
-thigh = 0.8
+tlow = 0.01
+thigh = 0.9
 
 # Aplicar el detector de bordes de Canny
 result_image = edgeCanny(original_image, sigma, tlow, thigh)
