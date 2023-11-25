@@ -58,10 +58,8 @@ def hit_or_miss(inImage, objSE, bgSE, center=None):
     # Aplicamos la erosión al complemento de la imagen de entrada con el elemento estructurante del fondo
     erosionBg = erode(1 - inImage, bgSE, center)
 
-    # La operación hit-or-miss es la intersección de las dos erosiones
+    # Intersección de las dos erosiones
     outImage = cv2.bitwise_and(erosionObj, erosionBg)
-
-    # erosionObj && erosionBg
 
     return outImage
 
