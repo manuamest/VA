@@ -1,6 +1,11 @@
 import numpy as np
 import cv2
 
+def extendImageDuplicate(inImage, arriba, abajo, derecha, izquierda):
+    pad_width = ((arriba, abajo), (izquierda, derecha))
+    outImage = np.pad(inImage, pad_width= pad_width, mode='edge')
+    return outImage
+
 def erode(inImage, SE, center=None):
     # Si el centro no se proporciona, se calcula
     if center is None:
@@ -27,6 +32,8 @@ def dilate(inImage, SE, center=None):
 
     # Crear una imagen de salida del mismo tamaño que la imagen de entrada
     outImage = np.zeros_like(inImage)
+
+    extendImageDuplicate(inImage, 1, 1, 1, 1)
 
     # Recorrer cada píxel de la imagen
     for i in range(center[0], inImage.shape[0]-center[0]):
@@ -63,6 +70,6 @@ if __name__ == "__main__":
 
     # Mostrar la imagen original y la filtrada
     cv2.imshow("Original Image", image)
-    cv2.imshow("Erode Image", output_image)
+    cv2.imshow("Dilate Image", output_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

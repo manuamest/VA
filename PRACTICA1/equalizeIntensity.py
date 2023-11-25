@@ -3,7 +3,7 @@ import numpy as np
 
 def equalizeIntensity(inImage, nBins=256):
 
-    # Asegurarse de que la imagen está en el rango [0, 1]
+    # Asegura que la imagen está en el rango [0, 1]
     inImage = np.clip(inImage, 0, 1)
 
     # Crear un histograma acumulativo
@@ -19,16 +19,15 @@ def equalizeIntensity(inImage, nBins=256):
 
     return outImage
 
-# Carga tu imagen de escala de grises en [0, 1]
-input_image = cv2.imread('imgp1/imagen_normalizada.png', cv2.IMREAD_GRAYSCALE).astype(np.float32) / 255.0
+def run_equalize_intensity(inImage):
 
-# Aplica la ecualización de intensidad
-output_image = equalizeIntensity(input_image)
+    # Aplica la ecualización de intensidad
+    output_image = equalizeIntensity(inImage, 256)
 
-cv2.imwrite('imgp1/equalizeIntensity.jpg', (output_image * 255).astype(np.uint8))
+    cv2.imwrite('resultados/equalizeIntensity.jpg', (output_image * 255).astype(np.float32))
 
-# Muestra la imagen de entrada y la imagen de salida
-cv2.imshow('Imagen de Entrada', input_image)
-cv2.imshow('Imagen de Salida', output_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    # Muestra la imagen de entrada y la imagen de salida
+    cv2.imshow('Imagen de Entrada', inImage)
+    cv2.imshow('Imagen de Salida', output_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

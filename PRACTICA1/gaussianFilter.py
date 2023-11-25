@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from filterImage import filterImage
 
 def gaussKernel1D(sigma):
     # Calcular N a partir de σ
@@ -26,28 +27,25 @@ def gaussianFilter(inImage, sigma):
     kernel1D = gaussKernel1D(sigma)
 
     # Aplicar la convolución horizontal (1D)
-    filtered_horizontal = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=1, arr=inImage)
+    filtered_horizontal = filterImage(inImage, kernel1D)
 
     # Aplicar la convolución vertical (1D) al resultado de la convolución horizontal
+    #filtered_image = filterImage(filtered_horizontal, kernel1D.T)
     filtered_image = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=0, arr=filtered_horizontal)
 
     return filtered_image
 
-# Ejemplo de uso
-if __name__ == "__main__":
+def run_gaussianFilter(inImage):
     # Parámetro σ
-    sigma = 1.5
-
-    # Generar una imagen de ejemplo (reemplaza esta línea con tu imagen real)
-    input_image = cv2.imread('imgp1/imagen_normalizada.png', cv2.IMREAD_GRAYSCALE).astype(np.float32) / 255.0
+    sigma = 2
 
     # Aplica el filtro gaussiano
-    output_image = gaussianFilter(input_image, sigma)
+    output_image = gaussianFilter(inImage, sigma)
 
-    cv2.imwrite('imgp1/gaussianFilter.jpg', (output_image * 255).astype(np.uint8))
+    cv2.imwrite('resultados/gaussianFilter.jpg', (output_image * 255).astype(np.float32))
 
     # Muestra la imagen de entrada y la imagen de salida
-    cv2.imshow('Imagen de Entrada', input_image)
-    cv2.imshow('Imagen de Salida', output_image)
+    cv2.imshow('Original image', inImage)
+    cv2.imshow('Gaussian Image', output_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
