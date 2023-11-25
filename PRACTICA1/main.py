@@ -8,15 +8,25 @@ from gaussKernel1D import gaussKernel1D
 from gaussianFilter import gaussianFilter, run_gaussianFilter
 from medianFilter import medianFilter, run_medianFilter
 from morph import run_morph
+from hit_or_miss import hit_or_miss, run_hitormiss
+from gradientImage import gradientImage, run_gradientImage
+from LoG import LoG, run_LoG
+from edgeCanny import edgeCanny, run_edgeCanny
 
 if __name__ == "__main__":
-    inImage = cv2.imread('resultados/morph.jpg', cv2.IMREAD_GRAYSCALE) / 255.0
+    inImage = cv2.imread('fotos_manu/closing.png', cv2.IMREAD_GRAYSCALE) / 255.0
     op = ['Erode', 'Dilate', 'Opening', 'Closing']
+    op2 = ['Roberts', 'CentralDiff', 'Prewitt', 'Sobel']
 
     #run_adjust_intensity(inImage)
     #run_equalize_intensity(inImage)
     #run_filterImage(inImage)
     #run_gaussianFilter(inImage)        #Revisar traspuesta
     #run_medianFilter(inImage)
-    #run_morph(inImage, op[0])          #Revisar extendImageDuplicate
-    
+    #run_morph(inImage, op[3])          #Revisar extendImageDuplicate
+    #run_hitormiss(inImage)             #Revisar imagen con filtros
+    #run_gradientImage(inImage, op2[0]) #Error en filterImage 2x2
+    #run_LoG(inImage)                   #Cruce por ceros y normalizacion
+    #run_edgeCanny(inImage)
+
+

@@ -63,44 +63,37 @@ def hit_or_miss(inImage, objSE, bgSE, center=None):
 
     return outImage
 
-# Cargamos la imagen de entrada
-image = cv2.imread('imgp1/HITORMISSORIGINAL.png', cv2.IMREAD_GRAYSCALE)/ 255
-_, binary_image = cv2.threshold(image, 0.5, 1, cv2.THRESH_BINARY)
+def run_hitormiss(inImage):
 
-kernel = np.array([[-1, -1, -1],
-                   [-1,  8, -1],
-                   [-1, -1, -1]])
+    #_, binary_image = cv2.threshold(inImage, 0.5, 1, cv2.THRESH_BINARY)
 
-objSE =  np.array([[0, 0, 0], 
-                   [1, 1, 0],
-                   [0, 1, 0]], dtype=np.uint8)
+    objSE =  np.array([[0, 0, 0], 
+                    [1, 1, 0],
+                    [0, 1, 0]], dtype=np.uint8)
 
-bgSE = np.array([[0, 1, 1],
-                 [0, 0, 1],
-                 [0, 0, 0]], dtype=np.uint8)
+    bgSE = np.array([[0, 1, 1],
+                    [0, 0, 1],
+                    [0, 0, 0]], dtype=np.uint8)
 
-inImageDiaposHoM = np.array([[0, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 1, 1, 0, 0],
-                             [0, 0, 1, 1, 1, 1, 0],
-                             [0, 0, 1, 1, 1, 1, 0],
-                             [0, 0, 0, 1, 1, 0, 0],
-                             [0, 0, 0, 1, 0, 0, 0],
-                             [0, 0, 0, 0, 0, 0, 0]])
+    inImageDiaposHoM = np.array([[0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 1, 1, 0, 0],
+                                [0, 0, 1, 1, 1, 1, 0],
+                                [0, 0, 1, 1, 1, 1, 0],
+                                [0, 0, 0, 1, 1, 0, 0],
+                                [0, 0, 0, 1, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0]])
 
-# Llamamos a la función hit_or_miss
-output_image = dilate(inImageDiaposHoM, objSE)
+    # Llamamos a la función hit_or_miss
+    output_image = hit_or_miss(inImageDiaposHoM, objSE, bgSE)
 
-SE = np.ones((13, 13), dtype=np.uint8)
+    print(inImageDiaposHoM)
+    print(output_image)
 
-print(inImageDiaposHoM)
-print(output_image)
-#output_image = erode(binary_image, bgSE)
+    # Guardamos la imagen de salida
+    #cv2.imwrite('resultados/hitormiss.png', (output_image * 255).astype(np.float32))
 
-# Guardamos la imagen de salida
-#cv2.imwrite('imgp1/hitormiss.png', output_image)
-
-# Mostrar la imagen original y la filtrada
-#cv2.imshow("Original Image", image)
-#cv2.imshow("HitOrMiss Image", output_image)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+    # Mostrar la imagen original y la filtrada
+    #cv2.imshow("Original Image", inImage)
+    #cv2.imshow("HitOrMiss Image", output_image)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()

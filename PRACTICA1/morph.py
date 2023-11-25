@@ -73,7 +73,7 @@ def run_morph(inImage, op):
     elif op == 'Closing':
         output_image = closing(inImage, SE)
 
-    cv2.imwrite('resultados/morph.jpg', (output_image * 255).astype(np.float32))
+    cv2.imwrite('resultados/closing.jpg', (output_image * 255).astype(np.float32))
 
     # Mostrar la imagen original y la filtrada
     cv2.imshow("Original Image", inImage)

@@ -1,124 +1,40 @@
 import cv2
 import numpy as np
-
-def filterImage(inImage, kernel):
-    # Obtener las dimensiones de la imagen de entrada y el kernel
-    rows, cols = inImage.shape
-    kRows, kCols = kernel.shape
-
-    # Calcular el desplazamiento necesario para centrar el kernel
-    dRow = kRows // 2
-    dCol = kCols // 2
-
-    # Crear una imagen de salida inicializada a ceros
-    outImage = np.zeros_like(inImage, dtype=np.float32)
-
-    # Convolución
-    for i in range(dRow, rows - dRow):
-        for j in range(dCol, cols - dCol):
-            # Extraer la región de interés de la imagen de entrada
-            roi = inImage[i - dRow:i + dRow + 1, j - dCol:j + dCol + 1]
-
-            # Aplicar la convolución entre el kernel y la región de interés
-            conv_result = np.sum(roi * kernel)
-
-            # Asignar el resultado a la posición correspondiente en la imagen de salida
-            outImage[i, j] = conv_result
-
-    return outImage
-
-def gaussKernel1D(sigma):
-    # Calcular N a partir de σ
-    N = int(2 * np.ceil(3 * sigma) + 1)
-
-    # Calcular el centro del kernel
-    center = N // 2
-
-    # Inicializar el kernel como un vector de ceros
-    kernel = np.zeros(N)
-
-    # Calcular el valor del kernel Gaussiano
-    for i in range(N):
-        x = i - center
-        kernel[i] = np.exp(-0.5 * (x / sigma)**2) / (sigma * np.sqrt(2 * np.pi))
-
-    # Normalizar el kernel para que la suma sea igual a 1
-    kernel /= np.sum(kernel)
-
-    return kernel
-
-def gaussianFilter(inImage, sigma):
-    # Calcular los kernels unidimensionales
-    kernel1D = gaussKernel1D(sigma)
-
-    # Aplicar la convolución horizontal (1D)
-    filtered_horizontal = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=1, arr=inImage)
-
-    # Aplicar la convolución vertical (1D) al resultado de la convolución horizontal
-    filtered_image = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=0, arr=filtered_horizontal)
-
-    return filtered_image
-
-def gradientImage(inImage, operator):
-
-    # Seleccion de operador
-    if operator == 'Roberts':
-        kernel_x = np.array([[-1, 0], [0, 1]], dtype=np.float32)
-        kernel_y = np.array([[0, -1], [1, 0]], dtype=np.float32)
-    elif operator == 'CentralDiff':
-        kernel_x = np.array([[-1, 0, 1]], dtype=np.float32)
-        kernel_y = np.array([[-1], [0], [1]], dtype=np.float32)
-    elif operator == 'Prewitt':
-        kernel_x = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]], dtype=np.float32)
-        kernel_y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]], dtype=np.float32)
-    elif operator == 'Sobel':
-        kernel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], dtype=np.float32)
-        kernel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], dtype=np.float32)
-    else:
-        return "Error: operador no reconocido"
-    
-    # Calculo gx y gy
-    gx = filterImage(inImage, kernel_x)
-    gy = filterImage(inImage, kernel_y)
-
-    return gx, gy
+from gaussianFilter import gaussianFilter
+from gradientImage import gradientImage
 
 def edgeCanny(inImage, sigma, tlow, thigh):
-    # Paso 1: Aplicar filtro Gaussiano para suavizar la imagen
+    # Filtro Gaussiano para suavizar la imagen
     smoothed_image = gaussianFilter(inImage, sigma)
 
-    # Paso 2: Calcular gradientes en las direcciones x e y con el operador Sobel
+    # Calcular gradientes en las direcciones x e y con el operador Sobel
     [gradient_x, gradient_y] = gradientImage(smoothed_image, 'Sobel')
 
-    # Paso 3: Calcular la magnitud del gradiente y la dirección
-    magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
+    # Calcular la magnitud del gradiente y la dirección
+    gradient_magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
     gradient_direction = (np.arctan2(gradient_y, gradient_x) * (180 / np.pi)) 
 
-    # Paso 4: Aplicar la supresión no máxima (non-maximum suppression)
-
-    suppressed_image = np.zeros_like(magnitude)
-    for i in range(1, magnitude.shape[0] - 1):
-        for j in range(1, magnitude.shape[1] - 1):
+    # Supresión no máxima
+    suppressed_image = np.zeros_like(gradient_magnitude)
+    for i in range(1, gradient_magnitude.shape[0] - 1):
+        for j in range(1, gradient_magnitude.shape[1] - 1):
             gradient_direction[gradient_direction < 0] += 180
-
             direction = gradient_direction[i, j]
-            
             if (0 <= direction < 22.5) or (157.5 <= direction <= 180):
-                neighbors = [magnitude[i, j - 1], magnitude[i, j + 1]]
+                neighbors = [gradient_magnitude[i, j - 1], gradient_magnitude[i, j + 1]]
             elif (22.5 <= direction < 67.5):
-                neighbors = [magnitude[i - 1, j - 1], magnitude[i + 1, j + 1]]
+                neighbors = [gradient_magnitude[i - 1, j - 1], gradient_magnitude[i + 1, j + 1]]
             elif (67.5 <= direction < 112.5):
-                neighbors = [magnitude[i - 1, j], magnitude[i + 1, j]]
+                neighbors = [gradient_magnitude[i - 1, j], gradient_magnitude[i + 1, j]]
             elif (112.5 <= direction < 157.5):
-                neighbors = [magnitude[i - 1, j + 1], magnitude[i + 1, j - 1]]
+                neighbors = [gradient_magnitude[i - 1, j + 1], gradient_magnitude[i + 1, j - 1]]
 
             # Comparar magnitud actual con vecinos en la dirección del gradiente
-            if magnitude[i, j] >= max(neighbors):
-                suppressed_image[i, j] = magnitude[i, j]
+            if gradient_magnitude[i, j] >= max(neighbors):
+                suppressed_image[i, j] = gradient_magnitude[i, j]
 
-    # Paso 5: Aplicar el umbral de histéresis
+    # Umbral de histéresis
     edges = np.zeros_like(suppressed_image)
-    
     strong_edges = (suppressed_image >= thigh)
     weak_edges = (suppressed_image >= tlow) & (suppressed_image <= thigh)
 
@@ -126,7 +42,6 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     edges[strong_edges] = 1
 
     # Etapa de seguimiento de bordes débiles conectados a bordes fuertes
-
     for i in range(1, suppressed_image.shape[0] - 1):
         for j in range(1, suppressed_image.shape[1] - 1):
             gradient_direction[gradient_direction < 0] += 180
@@ -148,20 +63,21 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     
     return edges
 
-# Cargar una imagen de ejemplo
-original_image = cv2.imread("imgp1/circles1.png", cv2.IMREAD_GRAYSCALE) / 255.0
+def run_edgeCanny(inImage):
+    # Parámetros de Canny
+    sigma = 0.2
+    tlow = 0.05
+    thigh = 0.2
 
-# Parámetros de Canny
-sigma = 0.2
-tlow = 0.05
-thigh = 0.2
+    # Aplicar el detector de bordes de Canny
+    outImage = edgeCanny(inImage, sigma, tlow, thigh)
 
-# Aplicar el detector de bordes de Canny
-result_image = edgeCanny(original_image, sigma, tlow, thigh)
+    # Guardar imagen resultado
+    cv2.imwrite('resultados/canny.jpg', (outImage * 255).astype(np.float32))
 
-# Mostrar la imagen original y el resultado
-cv2.imshow('Original Image', original_image)
+    # Mostrar la imagen original y el resultado
+    cv2.imshow('Original Image', inImage)
 
-cv2.imshow('Canny Edge Detection', result_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    cv2.imshow('Canny Edge Detection', outImage)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
