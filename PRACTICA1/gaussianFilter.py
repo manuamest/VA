@@ -30,10 +30,9 @@ def gaussianFilter(inImage, sigma):
     filtered_horizontal = filterImage(inImage, kernel1D)
 
     # Aplicar la convolución vertical (1D) al resultado de la convolución horizontal
-    #filtered_image = filterImage(filtered_horizontal, kernel1D.T)
-    filtered_image = np.apply_along_axis(lambda x: np.convolve(x, kernel1D, mode='same'), axis=0, arr=filtered_horizontal)
+    filtered_image = filterImage(np.transpose(filtered_horizontal), np.transpose(kernel1D))
 
-    return filtered_image
+    return np.transpose(filtered_image)
 
 def run_gaussianFilter(inImage):
     # Parámetro σ

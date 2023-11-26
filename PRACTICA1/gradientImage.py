@@ -6,8 +6,8 @@ def gradientImage(inImage, operator):
 
     # Seleccion de operador
     if operator == 'Roberts':
-        kernel_x = np.array([[-1, 0], [0, 1]], dtype=np.float32)
-        kernel_y = np.array([[0, -1], [1, 0]], dtype=np.float32)
+        kernel_x = np.array([[0, 0, 0], [0, -1, 0], [0, 0, 1]], dtype=np.float32)
+        kernel_y = np.array([[0, 0, 0], [0, 0, -1], [0, 1, 0]], dtype=np.float32)
     elif operator == 'CentralDiff':
         kernel_x = np.array([[-1, 0, 1]], dtype=np.float32)
         kernel_y = np.array([[-1], [0], [1]], dtype=np.float32)

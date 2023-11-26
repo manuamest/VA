@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 def equalizeIntensity(inImage, nBins=256):
 
@@ -7,9 +8,9 @@ def equalizeIntensity(inImage, nBins=256):
     inImage = np.clip(inImage, 0, 1)
 
     # Crear un histograma acumulativo
-    hist, _ = np.histogram(inImage * (nBins - 1), bins=nBins, range=(0, nBins - 1)) # Calculo del histograma
-    histacum = hist.cumsum()                                                        # Histograma acumulativo
-    histacum = histacum / histacum[-1]                                              # Normaliza entre 0 1
+    hist, _ = np.histogram(inImage * (nBins - 1), bins=nBins, range=(0, nBins - 1)) 
+    histacum = hist.cumsum()
+    histacum = histacum / histacum[-1]
 
     # Ecualizar la imagen usando el histograma acumulativo
     outImage = histacum[np.round(inImage * (nBins - 1)).astype(int)]
@@ -29,5 +30,6 @@ def run_equalize_intensity(inImage):
     # Muestra la imagen de entrada y la imagen de salida
     cv2.imshow('Imagen de Entrada', inImage)
     cv2.imshow('Imagen de Salida', output_image)
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()

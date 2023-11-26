@@ -8,11 +8,11 @@ def edgeCanny(inImage, sigma, tlow, thigh):
     smoothed_image = gaussianFilter(inImage, sigma)
 
     # Calcular gradientes en las direcciones x e y con el operador Sobel
-    [gradient_x, gradient_y] = gradientImage(smoothed_image, 'Sobel')
+    [gx, gy] = gradientImage(smoothed_image, 'Sobel')
 
     # Calcular la magnitud del gradiente y la dirección
-    gradient_magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
-    gradient_direction = (np.arctan2(gradient_y, gradient_x) * (180 / np.pi)) 
+    gradient_magnitude = np.sqrt(gx**2 + gy**2)
+    gradient_direction = (np.arctan2(gy, gx) * (180 / np.pi)) 
 
     # Supresión no máxima
     suppressed_image = np.zeros_like(gradient_magnitude)

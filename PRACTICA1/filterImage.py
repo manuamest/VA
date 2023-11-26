@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 def filterImage(inImage, kernel):
+
     # Obtener las dimensiones de la imagen de entrada y del kernel
     rows, cols = inImage.shape
     kRows, kCols = kernel.shape if len(kernel.shape) != 1 else (1, len(kernel))

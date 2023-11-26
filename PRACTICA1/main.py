@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import matplotlib
 
 from adjustIntensity import adjustIntensity, run_adjust_intensity
 from equalizeIntensity import equalizeIntensity, run_equalize_intensity
@@ -13,20 +14,22 @@ from gradientImage import gradientImage, run_gradientImage
 from LoG import LoG, run_LoG
 from edgeCanny import edgeCanny, run_edgeCanny
 
+
+
 if __name__ == "__main__":
-    inImage = cv2.imread('fotos_manu/closing.png', cv2.IMREAD_GRAYSCALE) / 255.0
+    inImage = cv2.imread('fotos_manu/gradient_laplacianogaussiano.png', cv2.IMREAD_GRAYSCALE) / 255.0
     op = ['Erode', 'Dilate', 'Opening', 'Closing']
     op2 = ['Roberts', 'CentralDiff', 'Prewitt', 'Sobel']
 
     #run_adjust_intensity(inImage)
     #run_equalize_intensity(inImage)
     #run_filterImage(inImage)
-    #run_gaussianFilter(inImage)        #Revisar traspuesta
+    #run_gaussianFilter(inImage)
     #run_medianFilter(inImage)
-    #run_morph(inImage, op[3])          #Revisar extendImageDuplicate
-    #run_hitormiss(inImage)             #Revisar imagen con filtros
-    #run_gradientImage(inImage, op2[0]) #Error en filterImage 2x2
-    #run_LoG(inImage)                   #Cruce por ceros y normalizacion
+    #run_morph(inImage, op[0])
+    #run_hitormiss(inImage)
+    #run_gradientImage(inImage, op2[1])
+    #run_LoG(inImage)
     #run_edgeCanny(inImage)
 
 

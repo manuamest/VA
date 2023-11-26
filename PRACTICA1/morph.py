@@ -1,16 +1,19 @@
 import numpy as np
 import cv2
 
-def extendImageDuplicate(inImage, arriba, abajo, derecha, izquierda):
-    pad_width = ((arriba, abajo), (izquierda, derecha))
-    outImage = np.pad(inImage, pad_width= pad_width, mode='edge')
-    return outImage
+def extend(inImage, arriba, abajo, derecha, izquierda):
+    # Duplicar en vertical y en horizontal
+    duplicated_vertical = np.tile(inImage, (1 + arriba + abajo, 1))
+    duplicated_image = np.tile(duplicated_vertical, (1, 1 + izquierda + derecha))
+
+    return duplicated_image
+
 
 def erode(inImage, SE, center=None):
 
     # Calculo centro
     if center is None:
-        center = [SE.shape[0] // 2, SE.shape[1] // 2]
+        center = [SE.shape[0]//2, SE.shape[1]//2]
 
     # Crear una imagen de salida del mismo tamaño que la imagen de entrada
     outImage = np.zeros_like(inImage)
@@ -35,7 +38,15 @@ def dilate(inImage, SE, center=None):
     # Crear una imagen de salida del mismo tamaño que la imagen de entrada
     outImage = np.zeros_like(inImage)
 
-    extendImageDuplicate(inImage, 1, 1, 1, 1)
+    # Parametros para la extension
+    arriba = max(0, center[0] - 1)
+    abajo = max(0, SE.shape[0] - center[0] - 1)
+    izquierda = max(0, center[1] - 1)
+    derecha = max(0, SE.shape[1] - center[1] - 1)
+
+    # Extender la imagen
+    extendedImage = extend(inImage, arriba, abajo, derecha, izquierda)
+
 
     # Recorrer cada píxel de la imagen
     for i in range(center[0], inImage.shape[0]-center[0]):
@@ -58,10 +69,8 @@ def closing(inImage, SE, center=None):
 
 # Ejemplo de uso
 def run_morph(inImage, op):
-    
-    #_, binary_image = cv2.threshold(image, 0.5, 1, cv2.THRESH_BINARY)
 
-    SE = np.ones((13, 13), dtype=np.uint8)
+    SE = np.ones((1, 1), dtype=np.uint8)
 
     # Aplicar el operador morfologico
     if op == 'Erode':
@@ -73,7 +82,7 @@ def run_morph(inImage, op):
     elif op == 'Closing':
         output_image = closing(inImage, SE)
 
-    cv2.imwrite('resultados/closing.jpg', (output_image * 255).astype(np.float32))
+    cv2.imwrite('resultados/' + op + '.jpg', (output_image * 255).astype(np.float32))
 
     # Mostrar la imagen original y la filtrada
     cv2.imshow("Original Image", inImage)

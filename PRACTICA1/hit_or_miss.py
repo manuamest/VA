@@ -56,9 +56,11 @@ def hit_or_miss(inImage, objSE, bgSE, center=None):
     erosionObj = erode(inImage, objSE, center)
 
     # Aplicamos la erosión al complemento de la imagen de entrada con el elemento estructurante del fondo
-    erosionBg = erode(1 - inImage, bgSE, center)
+    erosionBg = erode(np.abs(1 - inImage), bgSE, center)
 
     # Intersección de las dos erosiones
+    print(erosionBg.dtype)
+    print(erosionObj.dtype)
     outImage = cv2.bitwise_and(erosionObj, erosionBg)
 
     return outImage
@@ -75,7 +77,7 @@ def run_hitormiss(inImage):
                     [0, 0, 1],
                     [0, 0, 0]], dtype=np.uint8)
 
-    inImageDiaposHoM = np.array([[0, 0, 0, 0, 0, 0, 0],
+    inImage = np.array([[0, 0, 0, 0, 0, 0, 0],
                                 [0, 0, 0, 1, 1, 0, 0],
                                 [0, 0, 1, 1, 1, 1, 0],
                                 [0, 0, 1, 1, 1, 1, 0],
@@ -84,7 +86,7 @@ def run_hitormiss(inImage):
                                 [0, 0, 0, 0, 0, 0, 0]])
 
     # Llamamos a la función hit_or_miss
-    output_image = hit_or_miss(inImageDiaposHoM, objSE, bgSE)
+    output_image = hit_or_miss(inImage, objSE, bgSE)
 
     print(inImageDiaposHoM)
     print(output_image)
