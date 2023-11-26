@@ -41,7 +41,7 @@ def run_filterImage(inImage):
     output_image = filterImage(inImage, kernel.T)
 
     # Guardar la imagen resultado
-    cv2.imwrite('resultados/filterImage2.jpg', (output_image * 255).astype(np.float32))
+    cv2.imwrite('resultados/filterImage.jpg', (output_image * 255).astype(np.float32))
 
     # Mostrar la imagen original y la filtrada
     cv2.imshow("Original Image", inImage)

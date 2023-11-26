@@ -17,7 +17,7 @@ from edgeCanny import edgeCanny, run_edgeCanny
 
 
 if __name__ == "__main__":
-    inImage = cv2.imread('fotos_manu/gradient_laplacianogaussiano.png', cv2.IMREAD_GRAYSCALE) / 255.0
+    inImage = cv2.imread('pruebas/circles1.png', cv2.IMREAD_GRAYSCALE) / 255.0
     op = ['Erode', 'Dilate', 'Opening', 'Closing']
     op2 = ['Roberts', 'CentralDiff', 'Prewitt', 'Sobel']
 
@@ -26,10 +26,10 @@ if __name__ == "__main__":
     #run_filterImage(inImage)
     #run_gaussianFilter(inImage)
     #run_medianFilter(inImage)
-    #run_morph(inImage, op[0])
+    #run_morph(inImage, op[3])
     #run_hitormiss(inImage)
-    #run_gradientImage(inImage, op2[1])
+    #run_gradientImage(inImage, op2[0])
     #run_LoG(inImage)
-    #run_edgeCanny(inImage)
+    run_edgeCanny(inImage)
 
 

@@ -31,6 +31,10 @@ def run_gradientImage(inImage, op):
     # Aplicar el operador
     gx, gy = gradientImage(inImage, op)
 
+    # Guardar los resultados
+    cv2.imwrite('resultados/gx.png', (gx * 255).astype(np.float32))
+    cv2.imwrite('resultados/gy.png', (gy * 255).astype(np.float32))
+
     # Mostrar las imágenes resultantes
     cv2.imshow("Original Image", inImage)
     cv2.imshow("Gradient X", gx)
