@@ -33,9 +33,9 @@ def filterImage(inImage, kernel):
 def run_filterImage(inImage):
 
     # Definir un kernel
-    #kernel = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+    kernel = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])/9
 
-    kernel = np.array([1, 1, 1])
+    #kernel = np.array([1, 1, 1])
 
     # Aplicar el filtro a la imagen
     output_image = filterImage(inImage, kernel.T)

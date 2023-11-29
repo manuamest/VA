@@ -47,6 +47,6 @@ def mostrarhistogramas(original, modificada):
     plt.show()
 
 if __name__ == "__main__":
-    original = cv2.imread('fotos_manu/adjust_filter.png', cv2.IMREAD_GRAYSCALE) / 255.0
+    original = cv2.imread('pruebas/miguel.png', cv2.IMREAD_GRAYSCALE) / 255.0
     modificada = cv2.imread('resultados/adjustIntensity.jpg', cv2.IMREAD_GRAYSCALE) / 255.0
     mostrarhistogramas(original, modificada)

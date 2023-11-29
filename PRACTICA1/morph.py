@@ -70,7 +70,8 @@ def closing(inImage, SE, center=None):
 # Ejemplo de uso
 def run_morph(inImage, op):
 
-    SE = np.ones((1, 1), dtype=np.uint8)
+    SE = np.ones((7, 7), dtype=np.uint8)
+    SE = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
 
     # Aplicar el operador morfologico
     if op == 'Erode':

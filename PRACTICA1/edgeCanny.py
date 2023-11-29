@@ -65,9 +65,9 @@ def edgeCanny(inImage, sigma, tlow, thigh):
 
 def run_edgeCanny(inImage):
     # Parámetros de Canny
-    sigma = 0.2
-    tlow = 0.05
-    thigh = 0.2
+    sigma = 1.2
+    tlow = 0.15
+    thigh = 0.4
 
     # Aplicar el detector de bordes de Canny
     outImage = edgeCanny(inImage, sigma, tlow, thigh)

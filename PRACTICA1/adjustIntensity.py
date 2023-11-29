@@ -19,9 +19,9 @@ def adjustIntensity(inImage, inRange=[], outRange=[0, 1]):
 def run_adjust_intensity(inImage):
 
     # Aplicar la función adjustIntensity con los valores deseados de inRange y outRange
-    inRange = [0.3, 0.7]  # Rango de entrada
-    #outRange = [0.1, 0.9]  # Rango de salida
-    outImage = adjustIntensity(inImage, inRange)
+    #inRange = [0, 0.9]  # Rango de entrada
+    outRange = [0.1, 0.9]  # Rango de salida
+    outImage = adjustIntensity(inImage, outRange)
 
     # Guardar la imagen de salida
     cv2.imwrite('resultados/adjustIntensity.jpg', (outImage * 255).astype(np.float32))

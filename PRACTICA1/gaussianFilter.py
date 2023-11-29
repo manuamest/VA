@@ -36,7 +36,7 @@ def gaussianFilter(inImage, sigma):
 
 def run_gaussianFilter(inImage):
     # Parámetro σ
-    sigma = 2
+    sigma = 3
 
     # Aplica el filtro gaussiano
     output_image = gaussianFilter(inImage, sigma)

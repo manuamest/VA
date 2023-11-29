@@ -36,7 +36,7 @@ def LoG(inImage, sigma):
 
 def run_LoG(inImage):
     
-    sigma = 0.5
+    sigma = 1
 
     # Aplicar el filtro a la imagen
     output_image = LoG(inImage, sigma)

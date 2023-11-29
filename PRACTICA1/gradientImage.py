@@ -26,10 +26,14 @@ def gradientImage(inImage, operator):
 
     return gx, gy
 
-def run_gradientImage(inImage, op):
+def run_gradientImage(inImage, op, norm):
 
     # Aplicar el operador
     gx, gy = gradientImage(inImage, op)
+
+    if norm:
+        gx = gx - np.min(gx)/(np.max(gx)-np.min(gx))
+        gy = gy - np.min(gy)/(np.max(gy)-np.min(gy))
 
     # Guardar los resultados
     cv2.imwrite('resultados/gx.png', (gx * 255).astype(np.float32))

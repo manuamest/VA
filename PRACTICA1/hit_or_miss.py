@@ -13,13 +13,13 @@ def hit_or_miss(inImage, objSE, bgSE, center=None):
 
     # Aplicamos la erosión a la imagen de entrada con el elemento estructurante del objeto
     erosionObj = erode(inImage, objSE, center)
-
     # Aplicamos la erosión al complemento de la imagen de entrada con el elemento estructurante del fondo
-    erosionBg = erode(np.abs(1 - inImage), bgSE, center)
+    erosionBg = erode((1 - inImage), bgSE, center)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
     # Intersección de las dos erosiones
-    print(erosionBg.dtype)
-    print(erosionObj.dtype)
     outImage = cv2.bitwise_and(erosionObj, erosionBg)
 
     return outImage
@@ -28,13 +28,13 @@ def run_hitormiss(inImage):
 
     #_, binary_image = cv2.threshold(inImage, 0.5, 1, cv2.THRESH_BINARY)
 
-    objSE =  np.array([[0, 0, 0], 
-                    [1, 1, 0],
-                    [0, 1, 0]], dtype=np.uint8)
+    objSE =  np.array([[0, 1, 0], 
+                       [1, 1, 1],
+                       [0, 1, 0]], dtype=np.uint8)
 
-    bgSE = np.array([[0, 1, 1],
-                    [0, 0, 1],
-                    [0, 0, 0]], dtype=np.uint8)
+    bgSE = np.array([[1, 0, 1],
+                     [0, 0, 0],
+                     [1, 0, 1]], dtype=np.uint8)
 
     #inImage = np.array([[0, 0, 0, 0, 0, 0, 0],
     #                            [0, 0, 0, 1, 1, 0, 0],
@@ -44,8 +44,10 @@ def run_hitormiss(inImage):
     #                            [0, 0, 0, 1, 0, 0, 0],
     #                            [0, 0, 0, 0, 0, 0, 0]])
 
+    _, binary_image = cv2.threshold(inImage, 0.5, 1, cv2.THRESH_BINARY)
+
     # Llamamos a la función hit_or_miss
-    output_image = hit_or_miss(inImage, objSE, bgSE)
+    output_image = hit_or_miss(binary_image, objSE, bgSE)
 
     #print(inImage)
     #print(output_image)
