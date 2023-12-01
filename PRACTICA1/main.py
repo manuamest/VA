@@ -30,6 +30,6 @@ if __name__ == "__main__":
     #run_hitormiss(inImage)
     #run_gradientImage(inImage, op2[0], True)
     #run_LoG(inImage)
-    #run_edgeCanny(inImage)
+    run_edgeCanny(inImage)
 
 
