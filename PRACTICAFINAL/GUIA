@@ -1,16 +1,3 @@
-Entiendo que estás trabajando en un proyecto de detección de campo, balón y jugadores en imágenes de partidos de fútbol, utilizando Python 3 y las bibliotecas NumPy/SciPy, así como librerías de procesamiento de imágenes como scikit-image y OpenCV. Aquí hay un enfoque general para abordar cada uno de los objetivos establecidos:
-
-### 1. Detectar el área ocupada por el terreno de juego (césped):
-
-#### Pasos sugeridos:
-- **Preprocesamiento de la imagen:**
-  - Aplicar técnicas de preprocesamiento como suavizado y ajuste de contraste.
-  - Convertir la imagen a escala de grises.
-
-- **Segmentación del césped:**
-  - Utilizar técnicas de segmentación (por ejemplo, umbralización) para aislar el césped.
-  - Seleccionar el área más grande como el terreno de juego.
-
 ### 2. Localizar las líneas de siega del césped, indicativas de la perspectiva:
 
 #### Pasos sugeridos:
